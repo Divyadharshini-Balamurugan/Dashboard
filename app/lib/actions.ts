@@ -6,7 +6,7 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { ca } from 'zod/v4/locales';
+// import { ca } from 'zod/v4/locales';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
  
@@ -61,7 +61,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
       INSERT INTO invoices (customer_id, amount, status, date)
       VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
     `;
-  } catch (error) {
+  } catch {
     // If a database error occurs, return a more specific error.
     return {
       message: 'Database Error: Failed to Create Invoice.',
@@ -99,7 +99,7 @@ export async function updateInvoice(
       SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
       WHERE id = ${id}
     `;
-  } catch (error) {
+  } catch {
     return { message: 'Database Error: Failed to Update Invoice.' };
   }
  
@@ -107,7 +107,6 @@ export async function updateInvoice(
   redirect('/dashboard/invoices');
 }
 export async function deleteInvoice(id: string) {
-    throw new Error('Failed to Delete Invoice');
 
   await sql`DELETE FROM invoices WHERE id = ${id}`;
   revalidatePath('/dashboard/invoices');
